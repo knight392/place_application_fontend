@@ -8,7 +8,7 @@ import mutations from './mutations'
 import actions from './actions'
 import getters from './getters'
 const state =  {
-  // 管理员
+   // 管理员
    admin: null,
    // 教师
    teacher: null,

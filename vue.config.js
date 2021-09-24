@@ -30,7 +30,7 @@ module.exports = {
       "/api": {
         target: "http://localhost:8080",
         changeOrigin: true,
-        ws: true,//websocket支持
+        ws: true, //websocket支持
         secure: false,
         pathRewrite: {
           "^/api": ""

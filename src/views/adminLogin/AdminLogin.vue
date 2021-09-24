@@ -127,7 +127,7 @@ export default {
       this.$message.error(msg);
     },
     toAdminPage({admin_no,admin_name}) {
-      // 两秒后跳转到amdin页面
+      // 0.5秒后跳转到amdin页面
       const admin = {admin_no,admin_name}
       this.$store.commit(ADDADMIN, admin)
       setTimeout(() => {

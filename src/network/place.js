@@ -10,7 +10,8 @@
  export function getAllPlacesRequest() {
    return request({
        url: '/getAllPlacesServlet',
-       method: 'get'
+       method: 'get',
+       
      })
  }
  

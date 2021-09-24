@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from 'views/home/Home'
 import store from 'store'
+import { ADMINLOGINWITHTOKEN } from 'store/actions-type'
+import { ADDADMIN } from 'store/mutations-type'
 
 const Admin = () => import('views/admin/Admin')
 const AdminLogin = () => import("views/adminLogin/AdminLogin")
@@ -62,10 +64,10 @@ const routes = [
             redirect: "all"
           },
           {
-            path:'all',
+            path: 'all',
             component: TeacherAll,
             meta: {
-              title:'所有教师'
+              title: '所有教师'
             }
           },
           {
@@ -75,10 +77,10 @@ const routes = [
             meta: {
               title: '教师详情信息'
             },
-            props: (route) => ({teacher_no:route.params.teacher_no, teacher_name:route.params.teacher_name, positions:route.params.positions})
+            props: (route) => ({ teacher_no: route.params.teacher_no, teacher_name: route.params.teacher_name, positions: route.params.positions })
           },
         ]
-    
+
       },
       // 职位管理
       {
@@ -90,10 +92,10 @@ const routes = [
             redirect: "all"
           },
           {
-            path:'all',
+            path: 'all',
             component: PositionAll,
             meta: {
-              title:'所有职位'
+              title: '所有职位'
             }
           },
           {
@@ -103,7 +105,7 @@ const routes = [
             meta: {
               title: '职位详情信息'
             },
-            props: (route) => ({position:route.params.position})
+            props: (route) => ({ position: route.params.position })
           },
         ]
       },
@@ -117,10 +119,10 @@ const routes = [
             redirect: "all"
           },
           {
-            path:'all',
+            path: 'all',
             component: PlaceAll,
             meta: {
-              title:'所有场地'
+              title: '所有场地'
             }
           },
           {
@@ -130,10 +132,10 @@ const routes = [
             meta: {
               title: '场地详情信息'
             },
-            props: (route) => ({place:route.params.place})
+            props: (route) => ({ place: route.params.place })
           },
         ]
-        
+
       },
       // 流程管理
       {
@@ -145,10 +147,10 @@ const routes = [
             redirect: "all"
           },
           {
-            path:'all',
+            path: 'all',
             component: ProcedureAll,
             meta: {
-              title:'所有流程'
+              title: '所有流程'
             }
           },
           {
@@ -158,7 +160,7 @@ const routes = [
             meta: {
               title: '流程详情信息'
             },
-            props: (route) => ({procedure:route.params.procedure})
+            props: (route) => ({ procedure: route.params.procedure })
           },
         ]
       }
@@ -166,8 +168,16 @@ const routes = [
     beforeEnter: (to, from, next) => {
       if (store.state.admin === null) {
         // 未登录
-        next({path: '/adminLogin'})
-      }else{
+        // 根据token获取admin数据，异步请求，看是否能获取到
+        store.dispatch(ADMINLOGINWITHTOKEN).then(admin => {
+          store.commit(ADDADMIN, admin);
+          next();
+        }, () => {
+          next({ path: '/adminLogin' })
+        }).catch(() => {
+          next({ path: '/adminLogin' })
+        })
+      } else {
         next()
       }
     }

@@ -10,7 +10,8 @@ import {request} from './request'
 export function getAllTeachersRequest() {
   return request({
       url: '/getAllTeachersServlet',
-      method: 'get'
+      method: 'get',
+     
     })
 }
 
