@@ -2,8 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from 'views/home/Home'
 import store from 'store'
-import { ADMINLOGINWITHTOKEN } from 'store/actions-type'
-import { ADDADMIN } from 'store/mutations-type'
+import { ADMINLOGINWITHTOKEN,TEACHERLOGINWITHTOKEN } from 'store/actions-type'
+import { ADDADMIN,ADD_TEACHER } from 'store/mutations-type'
 
 const Admin = () => import('views/admin/Admin')
 const AdminLogin = () => import("views/adminLogin/AdminLogin")
@@ -23,6 +23,11 @@ const PlaceEdit = () => import("views/managePlace/childCopms/PlaceEdit");
 const PlaceAll = () => import("views/managePlace/childCopms/PlaceAll");
 const ProcedureEdit = () => import("views/manageProcedure/childCopms/ProcedureEdit");
 const ProcedureAll = () => import("views/manageProcedure/childCopms/ProcedureAll");
+const ExamineTask = () => import("views/examineTask/ExamineTask");
+const TaskAll = () => import("views/examineTask/childComps/TaskAll");
+const TaskDetail = () => import("views/examineTask/childComps/TaskDetail");
+
+const ChatMsg = () => import("views/chatMsg/ChatMsg");
 
 const routes = [
   // 重定向
@@ -198,6 +203,62 @@ const routes = [
     component: Teacher,
     meta: {
       title: '教师端页面'
+    },
+    children:[
+      // 也可以使用redirect来设置一个默认视图
+      {
+        path: '/',
+        redirect: "examineTask"
+      },
+      // 我的审批
+      {
+        path: 'examineTask',
+        component: ExamineTask,
+        children: [
+          {
+            path: '/',
+            redirect: "all"
+          },
+          {
+            path: 'all',
+            component: TaskAll,
+            name: 'TaskAll',
+            meta: {
+              title: '我的审批'
+            }
+          },
+          {
+            path: 'detail',
+            name: 'TaskDetail',
+            component: TaskDetail,
+            meta: {
+              title: '审批详情'
+            },
+            props: (route) => ({ task: route.params.task })
+          }
+        ]
+      },
+      // 消息
+      {
+        path: 'chatMsg',
+        component: ChatMsg
+      }
+    ],
+    beforeEnter: (to, from, next) => {
+      if (store.state.teacher === null) {
+        // 未登录
+        // 根据token获取teacher数据，异步请求，看是否能获取到
+        store.dispatch(TEACHERLOGINWITHTOKEN).then(admin => {
+          store.commit(ADD_TEACHER, admin);
+          next();
+        }, () => {
+          next({ path: '/teacherLogin' })
+        }).catch(() => {
+          next({ path: '/teacherLogin' })
+        })
+      } else {
+        next()
+      }
     }
   },
   // 教师登录

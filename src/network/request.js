@@ -1,10 +1,11 @@
 import axios from 'axios'
 
-let devSrc = 'http://localhost:8081'
+const devSrc = 'http://localhost:8081' // 代理服务器主机地址
+export const targetSrc = '/api' // proxy 代理目标对象
 export function request(config) {
   // 1.创建axios的实例
   const instance = axios.create({
-    baseURL: devSrc+'/api',
+    baseURL: devSrc+targetSrc,
     timeout: 5000
   })
 

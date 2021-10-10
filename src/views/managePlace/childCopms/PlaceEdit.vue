@@ -10,8 +10,19 @@
           label="场地名称"
           :label-width="formLabelWidth"
           prop="place_name"
+         
         >
-          <el-input v-model="form.place_name" autocomplete="off"></el-input>
+          <el-input v-model="form.place_name" autocomplete="off" :readonly=" !updateAble"></el-input>
+        </el-form-item>
+        
+        <el-form-item
+          label="状态"
+          :label-width="formLabelWidth"
+        >
+           <el-tag v-if="updateAble" type="danger" size="small"
+            >{{status}}</el-tag
+          >
+          <el-tag v-else size="small">{{status}}</el-tag>
         </el-form-item>
         <el-form-item label="所属流程" :label-width="formLabelWidth">
           <el-tag v-if="place.aplProcedure === null" type="warning" size="small"
@@ -29,13 +40,34 @@
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 4 }"
             autocomplete="off"
+            :readonly="!updateAble"
           ></el-input>
+        </el-form-item>
+        <el-form-item label="场地照片" :label-width="formLabelWidth">
+          <el-upload
+            action="api/uploadServlet"
+            list-type="picture-card"
+            :file-list="imgList"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            :on-success="handleSuccess"
+            style="position: relative"
+            :limit="1"
+            :disabled="!updateAble"
+            >
+            <i class="el-icon-plus"></i>
+           
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="" />
+          </el-dialog>
         </el-form-item>
         <el-form-item :label-width="formLabelWidth">
           <el-button
             class="submit-btn"
             type="primary"
             @click="submitPlace('form')"
+            :disabled="!updateAble"
             >确 定</el-button
           >
         </el-form-item>
@@ -78,6 +110,23 @@ export default {
       }
     );
   },
+  mounted() {
+    // 仅用来初次显示图片
+    this.imgList = this.place.image
+      ? [{ url: "api" + this.place.image.path }]
+      : [];
+    this.img_no = this.place.image ? this.place.image.img_no : 0
+  },
+
+  computed: {
+    updateAble(){
+      return this.place.available === 0
+    },
+    status(){
+      return this.place.available === 1 ? "可申请 （不可修改场地信息）" : "不可申请"
+    }
+  },
+
   data() {
     var checkName = (rule, value, callback) => {
       if (!value) {
@@ -116,8 +165,13 @@ export default {
       },
       teachers: [],
       loading: true,
+      dialogImageUrl: "",
+      dialogVisible: false,
+      imgList: [],
+      img_no: 0
     };
   },
+
   methods: {
     goBack() {
       this.$router.replace("/admin/placeManage");
@@ -152,6 +206,9 @@ export default {
         place_no: this.place.place_no,
         place_name: this.form.place_name,
         place_info: this.form.place_info,
+        image: {
+          img_no: this.img_no,
+        },
       };
       updatePlaceRequest(place).then(
         (res) => {
@@ -169,6 +226,21 @@ export default {
           this.$message.error("教师信息更新异常");
         }
       );
+    },
+    handleRemove() {
+      console.log('删除');
+      this.img_no = 0;
+    },
+    handlePictureCardPreview(file) {
+      console.log(
+        '预览'
+      );
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    handleSuccess(response) {
+      console.log('添加');
+      this.img_no = response.data
     },
   },
 };

@@ -74,6 +74,45 @@ export function updateTeacherRequest(teacher) {
   })
 }
 
+
+/**
+ * 教师登录
+ * @param {techer_no, teacher_password} teacher 
+ * @returns 
+ */
+export function loginTeacherRequest(teacher){
+  return request({
+    url:'/loginTeacherServlet',
+    data:teacher,
+    method:'post',
+    headers: {
+      "Content-Type":"application/json;charset=UTF-8"
+    }
+  })
+}
+
+/**
+ * 使用 cookie 中的 token 登录
+ * @returns 
+ */
+export function loginTeacherWithTokenRequest(){
+  return request({
+    url: '/loginTeacherWithTokenServlet',
+    method: 'get'
+  })
+}
+
+/**
+ * 退出登录，删除 cookie 中的 token
+ * @returns 
+ */
+export function logoffTeacherRequest(){
+  return request({
+    url: '/logoffTeacherServlet',
+    method: 'get'
+  })
+}
+
 /**
  * 教师类
  */

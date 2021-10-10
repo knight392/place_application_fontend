@@ -61,6 +61,7 @@
 import {
   updateProcedureRequest,
   setenceProcedureDuplicatedRequest,
+  getApplicationsIngNumberRequest,
 } from "network/procedure";
 import { getPlacesWithoutProcedureRequest } from "network/place";
 import { getPositionsWithoutProcedureRequest } from "network/position";
@@ -94,7 +95,7 @@ export default {
           label: position.position_name,
         };
       });
-       // 加入之前已选
+      // 加入之前已选
       this.procedure.positions.forEach((position) => {
         this.positions_src.push({
           key: position.position_no,
@@ -162,33 +163,53 @@ export default {
       loading: true,
     };
   },
+
   methods: {
     goBack() {
       this.$router.replace("/admin/procedureManage");
     },
     submitProcedure(formName) {
-      this.$confirm("此操作将修改流程信息, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          // 确定修改
-          this.$refs[formName].validate((valid) => {
-            // 前端格式验证通过
-            if (valid) {
-              this.updateProcedure(this.form);
-            } else {
-              this.$message.error("信息填写错误");
-              return false;
+      getApplicationsIngNumberRequest(this.procedure.pro_no)
+        .then((res) => {
+          return new Promise(
+            (resolve, reject) => {
+              if (res.status == 200) {
+                resolve(res.data);
+              } else {
+                reject();
+              }
+            },
+            (err) => {
+              console.log(err);
+              this.$message.error("网络异常,请稍后重试");
             }
-          });
+          );
         })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消修改",
-          });
+        .then((num) => {
+          const info = num > 0 ? `现有${num}个同学在申请该流程的场地，修改后将会中断这些申请, 是否继续?` : '此操作将修改申请流程，是否继续？'
+          this.$confirm(info, "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+          })
+            .then(() => {
+              // 确定修改
+              this.$refs[formName].validate((valid) => {
+                // 前端格式验证通过
+                if (valid) {
+                  this.updateProcedure(this.form);
+                } else {
+                  this.$message.error("信息填写错误");
+                  return false;
+                }
+              });
+            })
+            .catch(() => {
+              this.$message({
+                type: "info",
+                message: "已取消修改",
+              });
+            });
         });
     },
     updateProcedure({ pro_name, pro_form_name }) {

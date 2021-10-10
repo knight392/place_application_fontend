@@ -22,19 +22,20 @@
     <el-dialog title="添加教师" :visible.sync="dialogFormVisible">
       <el-form :model="form" status-icon :rules="rules" ref="form">
         <el-form-item
-          label="教师账号"
-          :label-width="formLabelWidth"
-          prop="teacher_no"
-        >
-          <el-input v-model="form.teacher_no" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item
           label="教师名称"
           :label-width="formLabelWidth"
           prop="teacher_name"
         >
           <el-input v-model="form.teacher_name" autocomplete="off"></el-input>
         </el-form-item>
+        <el-form-item
+          label="教师账号"
+          :label-width="formLabelWidth"
+          prop="teacher_no"
+        >
+          <el-input v-model="form.teacher_no" autocomplete="off"></el-input>
+        </el-form-item>
+
         <el-form-item
           label="密码"
           prop="teacher_password"
@@ -183,12 +184,13 @@ export default {
 
 <style scoped>
 .add-btn {
-  width: 220px;
-  height: 250px;
+  width: 270px;
+  height: 300px;
   text-align: center;
   position: relative;
   cursor: pointer;
   margin-bottom: 15px;
+  border-radius: 10px;
 }
 .add-btn:hover .el-icon-plus {
   color: #409eff;
@@ -200,8 +202,7 @@ export default {
   transform: translate(-50%, -50%);
   font-size: 50px;
 }
-.teacher-list{
+.teacher-list {
   flex-wrap: wrap;
-
 }
 </style>

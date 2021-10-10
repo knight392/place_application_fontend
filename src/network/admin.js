@@ -32,13 +32,25 @@ export function loginAdminWithTokenRequest() {
   })
 }
 
+
+/**
+ * 退出登录，删除 cookie 中的 token
+ * @returns 
+ */
+ export function logoffAdminRequest(){
+  return request({
+    url: '/logoffAdminServlet',
+    method: 'get'
+  })
+}
+
 /**
  * 修改管理员个人信息
  * @param {amdin_no, admin_name} admin 
  * @returns 
  */
 export function updateAdminRequest(admin) {
-  return request({
+  return  request({
     url: '/adminUpdateServlet',
     method: 'post',
     headers: {

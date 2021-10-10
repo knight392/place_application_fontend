@@ -6,24 +6,30 @@
     @mouseenter.native="show = true"
     @mouseleave.native="show = false"
   >
-    <el-header height="100px" class="header">
-      <div class="name">{{ place.place_name }}</div>
-      <div class="procedure">
-        <div> 所属流程</div>
-        <div class="tag">
-          <el-tag v-if="place.aplProcedure === null" type="warning" size="small"
-            >无</el-tag
-          >
-          <el-tag v-else size="small">{{ place.aplProcedure.pro_name }}</el-tag>
-        </div>
+    <img
+      width="268px"
+      height="200px"
+      fit="fill"
+      :src="'api' + place.image.path"
+    />
+    <div style="padding: 14px; position:relative">
+      <div class="available-tag">
+        <el-tag v-if="place.available
+ == 0" type="danger" size="small"
+          >禁</el-tag
+        >
+       
       </div>
-    </el-header>
-    <el-main class="body">
-      <div>场地描述</div>
-      <div class="place_info">
-        {{ place.place_info }}
+      <span>{{ place.place_name }}</span>
+      <div class="bottom clearfix">
+        <span>所属流程：</span>
+
+        <el-tag v-if="place.aplProcedure === null" type="warning" size="small"
+          >无</el-tag
+        >
+        <el-tag v-else size="small">{{ place.aplProcedure.pro_name }}</el-tag>
       </div>
-    </el-main>
+    </div>
     <!-- 悬浮显示编辑和删除选项 -->
     <transition name="el-fade-in-linear" class="">
       <div v-show="show" class="hover-pane">
@@ -68,6 +74,16 @@ export default {
   },
   methods: {
     deletePlace(place_no) {
+      if (
+        this.place.aplProcedure != null &&
+        this.place.aplProcedure.pro_no != 0
+      ) {
+        this.$message({
+          type: "warning",
+          message: "该场地已被添加到流程中，不可被删除",
+        });
+        return;
+      }
       this.$confirm(
         "此操作将永久删除该场地,可能会影响学生场地申请进度, 是否继续?",
         "提示",
@@ -106,6 +122,7 @@ export default {
     },
     toEditPage() {
       // 跳转到编辑页面
+      
       this.$router.replace({
         name: "placeEdit",
         params: { place: this.place },
@@ -131,20 +148,24 @@ export default {
   position: relative;
   margin-bottom: 15px;
   margin-right: 30px;
-  padding: 15px;
-  width: 220px;
-  height: 250px;
-}
-.body {
-  height: 100px;
+  width: 270px;
+  height: 300px;
+  border-radius: 10px;
 }
 
-.place_info {
-  margin-top: 8px;
-  font-size: 14px;
+.available-tag{
+  position: absolute;
+  top:14px;
+  right:14px;
 }
-.procedure .tag{
-  margin-top:8px;
+
+.image {
+  width: 100%;
+  display: block;
+}
+
+.procedure .tag {
+  margin-top: 8px;
 }
 
 .hover-pane {
@@ -167,5 +188,35 @@ export default {
 }
 .btns .text {
   margin-top: 5px;
+}
+
+.time {
+  font-size: 13px;
+  color: #999;
+}
+
+.bottom {
+  margin-top: 13px;
+  line-height: 12px;
+}
+
+.button {
+  padding: 0;
+  float: right;
+}
+
+.image {
+  width: 100%;
+  display: block;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both;
 }
 </style>

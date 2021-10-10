@@ -11,13 +11,14 @@
           :label-width="formLabelWidth"
           prop="position_name"
         >
-          <el-input v-model="form.position_name" autocomplete="off"></el-input>
+          <el-input v-model="form.position_name" autocomplete="off" :readonly="!updateAble"></el-input>
         </el-form-item>
         <el-form-item label="任职教师" :label-width="formLabelWidth">
           <el-select
             v-model="form.teacher_no"
             placeholder="请选择"
             :loading="loading"
+            :disabled="!updateAble"
           >
             <el-option
               v-for="item in teachers"
@@ -48,6 +49,7 @@
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 4 }"
             autocomplete="off"
+            :readonly="!updateAble"
           ></el-input>
         </el-form-item>
         <el-form-item :label-width="formLabelWidth">
@@ -55,6 +57,7 @@
             class="submit-btn"
             type="primary"
             @click="submitPosition('form')"
+            :disabled="!updateAble"
             >确 定</el-button
           >
         </el-form-item>
@@ -96,6 +99,11 @@ export default {
         this.$message.error("网络异常");
       }
     );
+  },
+  computed:{
+    updateAble(){
+      return this.position.aplProcedure == null
+    }
   },
   data() {
     var checkName = (rule, value, callback) => {
@@ -176,7 +184,7 @@ export default {
         position_name: this.form.position_name,
         position_info: this.form.position_info,
         teacher:
-          this.form.teacher_no == null
+          this.form.teacher_no == null || this.form.teacher_no == '无'
             ? null
             : {
                 teacher_no: this.form.teacher_no,

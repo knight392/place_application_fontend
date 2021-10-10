@@ -15,11 +15,31 @@
         </div>
       </div>
     </el-header>
-    <el-main class="body">
+    <el-main class="body" >
+       <div class="places">
+        <div>包含职位</div>
+        <div class="tags">
+          <el-tag
+            style="margin-right: 5px; margin-top: 5px"
+            v-for="item in procedure.positions"
+            :key="item.position_no"
+            size="small"
+            class="place-tag"
+            >{{ item.position_name }}</el-tag
+          >
+          <el-tag
+            v-if="procedure.places.length == 0"
+            type="warning"
+            size="small"
+            >无</el-tag
+          >
+        </div>
+      </div>
       <div class="places">
         <div>包含场地</div>
         <div class="tags">
           <el-tag
+            style="margin-right: 5px; margin-top: 5px"
             v-for="item in procedure.places"
             :key="item.place_no"
             size="small"
@@ -77,10 +97,25 @@ export default {
       required: true,
     },
   },
+  computed: {
+    canDelete() {
+      return (
+        this.procedure.places.length == 0 && this.procedure.positions.length
+      );
+    },
+  },
   methods: {
     deleteProcedure(procedure_no) {
+      if(!this.canDelete){
+        this.$message({
+          type: 'warning',
+          message: '该流程包含职位或场地，不能被删除'
+        })
+        return;
+      }
+
       this.$confirm(
-        "此操作将永久删除该流程,可能会影响学生流程申请进度, 是否继续?",
+        "此操作将永久删除该流程, 是否继续?",
         "提示",
         {
           confirmButtonText: "确定",
@@ -129,7 +164,7 @@ export default {
 
 <style  scoped>
 .header {
-  height: 100px;
+  height: 80px;
 }
 .header .name {
   margin-bottom: 10px;
@@ -143,22 +178,21 @@ export default {
   margin-bottom: 15px;
   margin-right: 30px;
   padding: 15px;
-  width: 220px;
-  height: 250px;
-}
-.body {
-  height: 100px;
+  width: 270px;
+  height: 300px;
+  border-radius: 10px;
 }
 
-.pro_form_name{
+.pro_form_name {
   margin-top: 8px;
   font-weight: 700;
+}
+.places{
+  margin-bottom:5px;
 }
 .places .tags {
   margin-top: 8px;
 }
-
-
 
 .hover-pane {
   position: absolute;

@@ -74,3 +74,17 @@ export function updateProcedureRequest(procedure) {
   })
 }
 
+
+/**
+ * 查询在某流程中正在申请的申请表数量
+ */
+
+export function getApplicationsIngNumberRequest(pro_no){
+  return request({
+    url: '/getApplicationsIngNumberServlet',
+    method: 'get',
+    params: {
+      pro_no
+    }
+  })
+}

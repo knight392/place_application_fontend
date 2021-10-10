@@ -120,14 +120,13 @@ export default {
 .teacher-card {
   position: relative;
   margin-bottom: 15px;
-  width: 220px;
-  height: 250px;
+  width: 270px;
+  height: 300px;
   margin-right: 30px;
   padding: 15px;
+   border-radius: 10px;
 }
-.body {
-  height: 100px;
-}
+
 .tags {
   margin-top: 10px;
 }

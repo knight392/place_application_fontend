@@ -139,12 +139,13 @@ export default {
 
 <style scoped>
 .add-btn {
-  width: 220px;
-  height: 270px;
+ width: 270px;
+  height: 300px;
   text-align: center;
   position: relative;
   cursor: pointer;
   margin-bottom: 15px;
+   border-radius: 10px;
 }
 .add-btn:hover .el-icon-plus {
   color: #409eff;

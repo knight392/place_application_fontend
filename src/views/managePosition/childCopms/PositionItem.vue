@@ -22,7 +22,10 @@
       <div class="procedure">
         <div>所属流程</div>
         <div class="tag">
-          <el-tag v-if="position.aplProcedure === null" type="warning" size="small"
+          <el-tag
+            v-if="position.aplProcedure === null"
+            type="warning"
+            size="small"
             >无</el-tag
           >
           <el-tag v-else size="small">{{
@@ -81,15 +84,21 @@ export default {
   },
   methods: {
     deletePosition(position_no) {
-      this.$confirm(
-        "此操作将永久删除该职位,可能会影响学生场地申请进度, 是否继续?",
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      )
+      if (
+        this.position.aplProcedure != null &&
+        this.position.aplProcedure.pro_no != 0
+      ) {
+        this.$message({
+          type: "warining",
+          message: "该职位已被添加到流程中，不可被删除",
+        });
+        return;
+      }
+      this.$confirm("此操作将永久删除该职位，是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
         .then(() => {
           // 确定删除
           deletePositionRequest(position_no).then(
@@ -119,6 +128,8 @@ export default {
     },
     toEditPage() {
       // 跳转到编辑页面
+    
+
       this.$router.replace({
         name: "positionEdit",
         params: { position: this.position },
@@ -130,7 +141,6 @@ export default {
 </script>
 
 <style  scoped>
-
 .header .name {
   margin-bottom: 10px;
   text-align: center;
@@ -143,11 +153,9 @@ export default {
   margin-bottom: 15px;
   margin-right: 30px;
   padding: 15px;
-  width: 220px;
-  height: 270px;
-}
-.body {
-  height: 100px;
+ width: 270px;
+  height: 300px;
+  border-radius: 10px;
 }
 
 .position_info {
@@ -155,13 +163,13 @@ export default {
   font-size: 14px;
 }
 .teacher .tag {
-  margin-top:8px;
+  margin-top: 8px;
 }
 .procedure {
-  margin-top:10px;
+  margin-top: 10px;
 }
 .procedure .tag {
-  margin-top:8px;
+  margin-top: 8px;
 }
 .hover-pane {
   position: absolute;
