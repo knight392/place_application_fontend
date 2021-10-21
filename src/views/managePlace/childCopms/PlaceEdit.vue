@@ -45,7 +45,7 @@
         </el-form-item>
         <el-form-item label="场地照片" :label-width="formLabelWidth">
           <el-upload
-            action="api/uploadServlet"
+            :action = "uploadURL"
             list-type="picture-card"
             :file-list="imgList"
             :on-preview="handlePictureCardPreview"
@@ -82,6 +82,7 @@ import {
   setencePlaceDuplicatedRequest,
 } from "network/place";
 import { getAllTeachersRequest } from "network/teacher";
+import {baseURL} from 'network/request';
 
 export default {
   props: {
@@ -90,6 +91,7 @@ export default {
       required: true,
     },
   },
+
   created() {
     getAllTeachersRequest().then(
       (res) => {
@@ -113,7 +115,7 @@ export default {
   mounted() {
     // 仅用来初次显示图片
     this.imgList = this.place.image
-      ? [{ url: "api" + this.place.image.path }]
+      ? [{ url: baseURL + this.place.image.path }]
       : [];
     this.img_no = this.place.image ? this.place.image.img_no : 0
   },
@@ -168,7 +170,9 @@ export default {
       dialogImageUrl: "",
       dialogVisible: false,
       imgList: [],
-      img_no: 0
+      img_no: 0,
+      baseURL,
+      uploadURL: baseURL + "/uploadServlet"
     };
   },
 

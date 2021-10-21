@@ -28,7 +28,7 @@
 
 <script>
 import TextRow from "./TextRow.vue";
-import { targetSrc } from "network/request.js";
+import { baseURL } from "network/request.js";
 export default {
   components: { TextRow },
   props: {
@@ -43,7 +43,7 @@ export default {
   },
   data() {
     return {
-      targetSrc // 代理路径
+      targetSrc:baseURL // 后端路径
     };
   },
   computed: {

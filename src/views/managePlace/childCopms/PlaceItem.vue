@@ -10,7 +10,7 @@
       width="268px"
       height="200px"
       fit="fill"
-      :src="'api' + place.image.path"
+      :src="baseURL + place.image.path"
     />
     <div style="padding: 14px; position:relative">
       <div class="available-tag">
@@ -60,10 +60,12 @@
 
 <script>
 import { deletePlaceRequest } from "network/place";
+import {baseURL} from 'network/request';
 export default {
   data() {
     return {
       show: false,
+      baseURL
     };
   },
   props: {

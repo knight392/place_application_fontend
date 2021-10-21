@@ -38,7 +38,7 @@
         </el-form-item>
         <el-form-item label="场地照片" :label-width="formLabelWidth">
           <el-upload
-            action="api/uploadServlet"
+            :action="uploadURL"
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
@@ -65,6 +65,7 @@
 <script>
 import PlaceItem from "./PlaceItem.vue";
 import { addPlaceRequest, setencePlaceDuplicatedRequest } from "network/place";
+import {baseURL} from 'network/request';
 import mixin from "../addPlaceImageMixin";
 export default {
   components: {
@@ -115,6 +116,7 @@ export default {
       img_no: 0,
       dialogImageUrl: "",
       dialogVisible: false,
+      uploadURL:baseURL + '/uploadServlet'
     };
   },
   methods: {
