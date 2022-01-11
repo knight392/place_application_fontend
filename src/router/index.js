@@ -287,6 +287,11 @@ const routes = [
     meta: {
       title: '学生登录'
     }
+  },
+  // 404 路由
+  {
+    path: '*',
+    redirect:'/home'
   }
 ]
 
@@ -294,6 +299,25 @@ const router = new VueRouter({
   mode: 'hash',
   base: process.env.BASE_URL,
   routes
+})
+
+
+/**
+ * 路由白名单与黑名单
+ */
+router.beforeEach((to, from, next) => {
+  const passurl = [];
+  const nopassurl = [];
+  let ispass = true;
+  if(passurl.indexOf(to.path) > -1){
+    ispass = true;
+  }
+  if(nopassurl.indexOf(to.path) > -1){
+    ispass = false;
+  }
+  if(ispass){
+    next();
+  }
 })
 
 Vue.use(VueRouter)

@@ -1,7 +1,9 @@
 // vue.config.js
-const path = require('path');
 
 module.exports = {
+  chainWebpack: config => {
+    config.output.filename('[name].[hash].js').end();
+  },
   configureWebpack: {
     resolve: {
       alias: {
@@ -20,20 +22,20 @@ module.exports = {
       warnings: true,
       errors: true
     },
-    host: "localhost",
+    host: "0.0.0.0",
     port: 80, // 端口号
     https: false, // https:{type:Boolean}
     open: false, //配置自动启动浏览器
     hotOnly: true, // 热更新
     // proxy: 'http://localhost:8080'   // 配置跨域处理,只有一个代理
     proxy: { //配置多个跨域
-      "/api": {
+      "/": {
         target: "http://localhost:8080",
         changeOrigin: true,
         ws: true, //websocket支持
         secure: false,
         pathRewrite: {
-          "^/api": ""
+          "^/": "" 
         }
       }
     }

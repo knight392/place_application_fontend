@@ -50,6 +50,7 @@ export default {
     admin() {
       return this.$store.state.admin;
     }
+
   },
   methods: {
      exit(){

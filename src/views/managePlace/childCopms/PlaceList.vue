@@ -65,7 +65,6 @@
 <script>
 import PlaceItem from "./PlaceItem.vue";
 import { addPlaceRequest, setencePlaceDuplicatedRequest } from "network/place";
-import {baseURL} from 'network/request';
 import mixin from "../addPlaceImageMixin";
 export default {
   components: {
@@ -116,7 +115,7 @@ export default {
       img_no: 0,
       dialogImageUrl: "",
       dialogVisible: false,
-      uploadURL:baseURL + '/uploadServlet'
+      uploadURL:'/uploadServlet'
     };
   },
   methods: {

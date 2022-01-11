@@ -82,7 +82,6 @@ import {
   setencePlaceDuplicatedRequest,
 } from "network/place";
 import { getAllTeachersRequest } from "network/teacher";
-import {baseURL} from 'network/request';
 
 export default {
   props: {
@@ -115,7 +114,7 @@ export default {
   mounted() {
     // 仅用来初次显示图片
     this.imgList = this.place.image
-      ? [{ url: baseURL + this.place.image.path }]
+      ? [{ url:  this.place.image.path }]
       : [];
     this.img_no = this.place.image ? this.place.image.img_no : 0
   },
@@ -171,8 +170,7 @@ export default {
       dialogVisible: false,
       imgList: [],
       img_no: 0,
-      baseURL,
-      uploadURL: baseURL + "/uploadServlet"
+      uploadURL: "/uploadServlet"
     };
   },
 
