@@ -11,7 +11,11 @@
           :label-width="formLabelWidth"
           prop="position_name"
         >
-          <el-input v-model="form.position_name" autocomplete="off" :readonly="!updateAble"></el-input>
+          <el-input
+            v-model="form.position_name"
+            autocomplete="off"
+            :readonly="!updateAble"
+          ></el-input>
         </el-form-item>
         <el-form-item label="任职教师" :label-width="formLabelWidth">
           <el-select
@@ -70,113 +74,129 @@
 import {
   updatePositionRequest,
   setencePositionDuplicatedRequest,
-} from "network/position";
-import { getAllTeachersRequest } from "network/teacher";
+} from 'network/position'
+import { getAllTeachersRequest } from 'network/teacher'
 
 export default {
   props: {
-    position: {
+    initPosition: {
       type: Object,
       required: true,
     },
   },
   created() {
+    this.position = this.initPosition
+    if (this.position) {
+      // 保存本地
+      sessionStorage.setItem('position', JSON.stringify(this.position))
+    } else {
+      // 本地提取
+      try {
+        const p = JSON.parse(sessionStorage.getItem('position'))
+        if (!p) {
+          throw null
+        }
+        this.position = p
+      } catch (e) {
+        this.$router.replace({ path: '/wrongPage' })
+      }
+    }
+    this.form = {
+      position_name: this.position.position_name,
+      position_info: this.position.position_info,
+      teacher_no:
+        this.position.teacher == null ? '无' : this.position.teacher.teacher_no,
+    }
     getAllTeachersRequest().then(
       (res) => {
         if (res.status === 200) {
-          this.teachers = res.data;
+          this.teachers = res.data
           this.teachers.push({
             teacher_no: null,
-            teacher_name: "置空",
-          });
-          this.loading = false;
+            teacher_name: '置空',
+          })
+          this.loading = false
         } else {
-          this.$message.error(res.info);
+          this.$message.error(res.info)
         }
       },
       (err) => {
-        console.log(err);
-        this.$message.error("网络异常");
+        console.log(err)
+        this.$message.error('网络异常')
       }
-    );
+    )
   },
-  computed:{
-    updateAble(){
+  computed: {
+    updateAble() {
       return this.position.aplProcedure == null
-    }
+    },
   },
   data() {
     var checkName = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error("教师名不能为空"));
+        return callback(new Error('教师名不能为空'))
       } else {
         // 与原来的名称不同，才需要验证
         if (value != this.position.position_name) {
           setencePositionDuplicatedRequest(value).then((res) => {
             if (res.data) {
-              return callback(new Error("该职位名已存在"));
+              return callback(new Error('该职位名已存在'))
             } else {
-              callback();
+              callback()
             }
-          });
+          })
         } else {
-          callback();
+          callback()
         }
       }
-    };
+    }
     var checkInfo = (rule, value, callback) => {
-      if (value === "") {
-        return callback(new Error("请输入职位描述"));
+      if (value === '') {
+        return callback(new Error('请输入职位描述'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
-      form: {
-        position_name: this.position.position_name,
-        position_info: this.position.position_info,
-        teacher_no:
-          this.position.teacher == null
-            ? "无"
-            : this.position.teacher.teacher_no,
-      },
-      formLabelWidth: "120px",
+      position: null,
+      form: null,
+      formLabelWidth: '120px',
       rules: {
-        position_name: [{ validator: checkName, trigger: "blur" }],
-        position_info: [{ validator: checkInfo, trigger: "blur" }],
+        position_name: [{ validator: checkName, trigger: 'blur' }],
+        position_info: [{ validator: checkInfo, trigger: 'blur' }],
       },
       teachers: [],
       loading: true,
-    };
+    }
   },
   methods: {
     goBack() {
-      this.$router.replace("/admin/positionManage");
+      this.$router.replace('/admin/positionManage')
     },
     submitPosition(formName) {
-      this.$confirm("此操作将修改职位信息, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm('此操作将修改职位信息, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       })
         .then(() => {
           // 确定修改
           this.$refs[formName].validate((valid) => {
             // 前端格式验证通过
             if (valid) {
-              this.updatePosition();
+              this.updatePosition()
             } else {
-              this.$message.error("信息填写错误");
-              return false;
+              this.$message.error('信息填写错误')
+              return false
             }
-          });
+          })
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消修改",
-          });
-        });
+            type: 'info',
+            message: '已取消修改',
+          })
+        })
     },
     updatePosition() {
       const position = {
@@ -189,26 +209,26 @@ export default {
             : {
                 teacher_no: this.form.teacher_no,
               },
-      };
+      }
       updatePositionRequest(position).then(
         (res) => {
           if (res.data) {
             this.$message({
-              type: "success",
+              type: 'success',
               message: res.info,
-            });
+            })
           } else {
-            this.$message.error(res.info);
+            this.$message.error(res.info)
           }
         },
         (err) => {
-          console.log(err);
-          this.$message.error("教师信息更新异常");
+          console.log(err)
+          this.$message.error('教师信息更新异常')
         }
-      );
+      )
     },
   },
-};
+}
 </script>
 
 <style  scoped>

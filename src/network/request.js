@@ -7,6 +7,7 @@ export const baseURL = process.env.VUE_APP_BASE_API;
 export function request(config) {
   // 1.创建axios的实例
   const instance = axios.create({
+   // 自定义实例默认值
     baseURL,
     timeout: 5000
   })

@@ -23,6 +23,10 @@
             <i class="el-icon-guide"></i>
             <span slot="title">流程管理</span>
           </el-menu-item>
+           <el-menu-item index="/admin/dataMonitor">
+            <i class="el-icon-guide"></i>
+            <span slot="title">数据监控</span>
+          </el-menu-item>
     </el-menu>
 </template>
 

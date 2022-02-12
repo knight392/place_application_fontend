@@ -27,12 +27,12 @@
         <el-form-item label="职位" :label-width="formLabelWidth">
           <div class="tags">
             <el-tag
-              v-for="item in positions"
+              v-for="item in teacher.positions"
               :key="item.positon_name"
               class="position-tag"
               >{{ item.position_name }}</el-tag
             >
-            <el-tag v-if="positions.length == 0" type="warning">无</el-tag>
+            <el-tag v-if="teacher.positions.length == 0" type="warning">无</el-tag>
           </div>
         </el-form-item>
         <el-form-item :label-width="formLabelWidth">
@@ -49,50 +49,62 @@
 </template>
 
 <script>
-import {updateTeacherRequest} from 'network/teacher'
+import { updateTeacherRequest } from 'network/teacher'
 export default {
   props: {
-    teacher_no: {
-      type: String,
-      required: true,
-    },
-    teacher_name: {
-      type: String,
-      required: true,
-    },
-    positions: {
-      type: Array,
-      required: true,
-    },
+    initTeacher:{
+      type: Object,
+      required: true
+    }
+  },
+  created(){
+      this.teacher = this.initTeacher
+    if (this.teacher) {
+      // 保存本地
+      sessionStorage.setItem('teacher', JSON.stringify(this.teacher))
+    } else {
+      // 本地提取
+      try {
+        const p = JSON.parse(sessionStorage.getItem('teacher'))
+        if (!p) {
+          throw null
+        }
+        this.teacher = p
+      } catch (e) {
+        this.$router.replace({ path: '/wrongPage' })
+      }
+    }
+    this.form = {
+      teacher_no: this.teacher.teacher_no,
+      teacher_name: this.teacher.teacher_name,
+    }
   },
   data() {
     var checkName = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error("教师名不能为空"));
+        return callback(new Error('教师名不能为空'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
-      form: {
-        teacher_no: this.teacher_no,
-        teacher_name: this.teacher_name,
-      },
-      formLabelWidth: "120px",
+      teacher: null,
+      form: null,
+      formLabelWidth: '120px',
       rules: {
-        teacher_name: [{ validator: checkName, trigger: "blur" }],
+        teacher_name: [{ validator: checkName, trigger: 'blur' }],
       },
-    };
+    }
   },
   methods: {
     goBack() {
-      this.$router.replace("/admin/teacherManage");
+      this.$router.replace('/admin/teacherManage')
     },
     submitTeacher(formName) {
-      this.$confirm("此操作将修改教师个人信息, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm('此操作将修改教师个人信息, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       })
         .then(() => {
           // 确定修改
@@ -101,35 +113,38 @@ export default {
             if (valid) {
               this.updateTeacher(this.form)
             } else {
-              this.$message.error("信息填写错误");
-              return false;
+              this.$message.error('信息填写错误')
+              return false
             }
-          });
+          })
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消修改",
-          });
-        });
-    },
-    updateTeacher({teacher_no, teacher_name}) {
-      updateTeacherRequest({teacher_no, teacher_name}).then(res => {
-        if (res.data) {
-          this.$message({
-            type:"success",
-            message:res.info
+            type: 'info',
+            message: '已取消修改',
           })
-        }else{
-          this.$message.error(res.info)
+        })
+    },
+    updateTeacher({ teacher_no, teacher_name }) {
+      updateTeacherRequest({ teacher_no, teacher_name }).then(
+        (res) => {
+          if (res.data) {
+            this.$message({
+              type: 'success',
+              message: res.info,
+            })
+          } else {
+            this.$message.error(res.info)
+          }
+        },
+        (err) => {
+          console.log(err)
+          this.$message.error('教师信息更新异常')
         }
-      },err => {
-        console.log(err);
-        this.$message.error("教师信息更新异常")
-      })
-    }
+      )
+    },
   },
-};
+}
 </script>
 
 <style  scoped>

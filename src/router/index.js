@@ -5,12 +5,11 @@ import store from 'store'
 import { ADMINLOGINWITHTOKEN,TEACHERLOGINWITHTOKEN } from 'store/actions-type'
 import { ADDADMIN,ADD_TEACHER } from 'store/mutations-type'
 
+
+// ****************************************
+// 管理员端
 const Admin = () => import('views/admin/Admin')
 const AdminLogin = () => import("views/adminLogin/AdminLogin")
-const Teacher = () => import('views/teacher/Teacher')
-const TeacherLogin = () => import("views/teacherLogin/TeacherLogin")
-const Student = () => import('views/student/Student')
-const StudentLogin = () => import("views/studentLogin/StudentLogin")
 const ManageTeacher = () => import("views/manageTeacher/ManageTeacher")
 const ManagePosition = () => import("views/managePosition/ManagePosition")
 const ManagePlace = () => import("views/managePlace/ManagePlace")
@@ -23,11 +22,29 @@ const PlaceEdit = () => import("views/managePlace/childCopms/PlaceEdit");
 const PlaceAll = () => import("views/managePlace/childCopms/PlaceAll");
 const ProcedureEdit = () => import("views/manageProcedure/childCopms/ProcedureEdit");
 const ProcedureAll = () => import("views/manageProcedure/childCopms/ProcedureAll");
+// 数据监控模块
+const DataMonitor = () => import("views/dataMonitor/DataMonitor");
+const EntryPage = () => import("views/dataMonitor/EntryPage");
+
+// ******************************************************
+// 教师端
+const Teacher = () => import('views/teacher/Teacher')
+const TeacherLogin = () => import("views/teacherLogin/TeacherLogin")
 const ExamineTask = () => import("views/examineTask/ExamineTask");
 const TaskAll = () => import("views/examineTask/childComps/TaskAll");
 const TaskDetail = () => import("views/examineTask/childComps/TaskDetail");
-
 const ChatMsg = () => import("views/chatMsg/ChatMsg");
+
+// ******************************************************
+// 学生端
+const Student = () => import('views/student/Student');
+const StudentLogin = () => import("views/studentLogin/StudentLogin");
+
+
+// ********************************************************
+// 其他页
+const WrongPage = () => import("views/other/WrongPage");
+const MissWay = () => import("views/other/MissWay");
 
 const routes = [
   // 重定向
@@ -82,7 +99,7 @@ const routes = [
             meta: {
               title: '教师详情信息'
             },
-            props: (route) => ({ teacher_no: route.params.teacher_no, teacher_name: route.params.teacher_name, positions: route.params.positions })
+            props: (route) => ({ initTeacher: route.params.teacher })
           },
         ]
 
@@ -110,7 +127,7 @@ const routes = [
             meta: {
               title: '职位详情信息'
             },
-            props: (route) => ({ position: route.params.position })
+            props: (route) => ({ initPosition: route.params.position })
           },
         ]
       },
@@ -137,7 +154,7 @@ const routes = [
             meta: {
               title: '场地详情信息'
             },
-            props: (route) => ({ place: route.params.place })
+            props: (route) => ({ initPlace: route.params.place })
           },
         ]
 
@@ -165,8 +182,24 @@ const routes = [
             meta: {
               title: '流程详情信息'
             },
-            props: (route) => ({ procedure: route.params.procedure })
+            props: (route) => ({ initProcedure: route.params.procedure })
           },
+        ]
+      },
+      // 数据监控
+      {
+        path: 'dataMonitor',
+        component: DataMonitor,
+        children: [
+          {
+            path: '/',
+            redirect: 'entryPage'
+          },
+          // 数据监控首页
+          {
+            path:'entryPage',
+            component: EntryPage
+          }
         ]
       }
     ],
@@ -288,10 +321,15 @@ const routes = [
       title: '学生登录'
     }
   },
+  // 错误页
+  {
+    path: '/wrongPage',
+    component: WrongPage
+  },
   // 404 路由
   {
     path: '*',
-    redirect:'/home'
+    component: MissWay
   }
 ]
 

@@ -10,19 +10,19 @@
           label="场地名称"
           :label-width="formLabelWidth"
           prop="place_name"
-         
         >
-          <el-input v-model="form.place_name" autocomplete="off" :readonly=" !updateAble"></el-input>
+          <el-input
+            v-model="form.place_name"
+            autocomplete="off"
+            :readonly="!updateAble"
+          ></el-input>
         </el-form-item>
-        
-        <el-form-item
-          label="状态"
-          :label-width="formLabelWidth"
-        >
-           <el-tag v-if="updateAble" type="danger" size="small"
-            >{{status}}</el-tag
-          >
-          <el-tag v-else size="small">{{status}}</el-tag>
+
+        <el-form-item label="状态" :label-width="formLabelWidth">
+          <el-tag v-if="updateAble" type="danger" size="small">{{
+            status
+          }}</el-tag>
+          <el-tag v-else size="small">{{ status }}</el-tag>
         </el-form-item>
         <el-form-item label="所属流程" :label-width="formLabelWidth">
           <el-tag v-if="place.aplProcedure === null" type="warning" size="small"
@@ -45,7 +45,7 @@
         </el-form-item>
         <el-form-item label="场地照片" :label-width="formLabelWidth">
           <el-upload
-            :action = "uploadURL"
+            :action="uploadURL"
             list-type="picture-card"
             :file-list="imgList"
             :on-preview="handlePictureCardPreview"
@@ -54,9 +54,8 @@
             style="position: relative"
             :limit="1"
             :disabled="!updateAble"
-            >
+          >
             <i class="el-icon-plus"></i>
-           
           </el-upload>
           <el-dialog :visible.sync="dialogVisible">
             <img width="100%" :src="dialogImageUrl" alt="" />
@@ -80,128 +79,145 @@
 import {
   updatePlaceRequest,
   setencePlaceDuplicatedRequest,
-} from "network/place";
-import { getAllTeachersRequest } from "network/teacher";
+} from 'network/place'
+import { getAllTeachersRequest } from 'network/teacher'
 
 export default {
   props: {
-    place: {
+    initPlace: {
       type: Object,
       required: true,
     },
   },
 
   created() {
+    // 判断有没有传入
+    this.place = this.initPlace
+    if (this.place) {
+      // 保存本地
+      sessionStorage.setItem('place', JSON.stringify(this.place))
+    } else {
+      // 本地提取
+      try {
+        const p = JSON.parse(sessionStorage.getItem('place'))
+        if (!p) {
+          throw null
+        }
+        this.place = p
+      } catch (e) {
+        this.$router.replace({ path: '/wrongPage' })
+      }
+    }
+    this.form = {
+      place_name: this.place.place_name,
+      place_info: this.place.place_info,
+    }
+    // 仅用来初次显示图片
+    this.imgList = this.place.image ? [{ url: this.place.image.path }] : []
+    this.img_no = this.place.image ? this.place.image.img_no : 0
     getAllTeachersRequest().then(
       (res) => {
         if (res.status === 200) {
-          this.teachers = res.data;
+          this.teachers = res.data
           this.teachers.push({
             teacher_no: null,
-            teacher_name: "置空",
-          });
-          this.loading = false;
+            teacher_name: '置空',
+          })
+          this.loading = false
         } else {
-          this.$message.error(res.info);
+          this.$message.error(res.info)
         }
       },
       (err) => {
-        console.log(err);
-        this.$message.error("网络异常");
+        console.log(err)
+        this.$message.error('网络异常')
       }
-    );
-  },
-  mounted() {
-    // 仅用来初次显示图片
-    this.imgList = this.place.image
-      ? [{ url:  this.place.image.path }]
-      : [];
-    this.img_no = this.place.image ? this.place.image.img_no : 0
+    )
   },
 
   computed: {
-    updateAble(){
+    updateAble() {
       return this.place.available === 0
     },
-    status(){
-      return this.place.available === 1 ? "可申请 （不可修改场地信息）" : "不可申请"
-    }
+    status() {
+      return this.place.available === 1
+        ? '可申请 （不可修改场地信息）'
+        : '不可申请'
+    },
   },
 
   data() {
     var checkName = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error("教师名不能为空"));
+        return callback(new Error('教师名不能为空'))
       } else {
         // 与原来的名称不同，才需要验证
-        if (value != this.place.place_name) {
+        if (value != this.place?.place_name) {
           setencePlaceDuplicatedRequest(value).then((res) => {
             if (res.data) {
-              return callback(new Error("该场地名已存在"));
+              return callback(new Error('该场地名已存在'))
             } else {
-              callback();
+              callback()
             }
-          });
+          })
         } else {
-          callback();
+          callback()
         }
       }
-    };
+    }
     var checkInfo = (rule, value, callback) => {
-      if (value === "") {
-        return callback(new Error("请输入场地描述"));
+      if (value === '') {
+        return callback(new Error('请输入场地描述'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
-      form: {
-        place_name: this.place.place_name,
-        place_info: this.place.place_info,
-      },
-      formLabelWidth: "120px",
+      place: null,
+      form: null,
+      formLabelWidth: '120px',
       rules: {
-        place_name: [{ validator: checkName, trigger: "blur" }],
-        place_info: [{ validator: checkInfo, trigger: "blur" }],
+        place_name: [{ validator: checkName, trigger: 'blur' }],
+        place_info: [{ validator: checkInfo, trigger: 'blur' }],
       },
       teachers: [],
       loading: true,
-      dialogImageUrl: "",
+      dialogImageUrl: '',
       dialogVisible: false,
       imgList: [],
       img_no: 0,
-      uploadURL: "/uploadServlet"
-    };
+      uploadURL: '/uploadServlet',
+    }
   },
 
   methods: {
     goBack() {
-      this.$router.replace("/admin/placeManage");
+      this.$router.replace('/admin/placeManage')
     },
     submitPlace(formName) {
-      this.$confirm("此操作将修改场地信息, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm('此操作将修改场地信息, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       })
         .then(() => {
           // 确定修改
           this.$refs[formName].validate((valid) => {
             // 前端格式验证通过
             if (valid) {
-              this.updatePlace();
+              this.updatePlace()
             } else {
-              this.$message.error("信息填写错误");
-              return false;
+              this.$message.error('信息填写错误')
+              return false
             }
-          });
+          })
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消修改",
-          });
-        });
+            type: 'info',
+            message: '已取消修改',
+          })
+        })
     },
     updatePlace() {
       const place = {
@@ -211,41 +227,39 @@ export default {
         image: {
           img_no: this.img_no,
         },
-      };
+      }
       updatePlaceRequest(place).then(
         (res) => {
           if (res.data) {
             this.$message({
-              type: "success",
+              type: 'success',
               message: res.info,
-            });
+            })
           } else {
-            this.$message.error(res.info);
+            this.$message.error(res.info)
           }
         },
         (err) => {
-          console.log(err);
-          this.$message.error("教师信息更新异常");
+          console.log(err)
+          this.$message.error('教师信息更新异常')
         }
-      );
+      )
     },
     handleRemove() {
-      console.log('删除');
-      this.img_no = 0;
+      console.log('删除')
+      this.img_no = 0
     },
     handlePictureCardPreview(file) {
-      console.log(
-        '预览'
-      );
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
+      console.log('预览')
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
     },
     handleSuccess(response) {
-      console.log('添加');
+      console.log('添加')
       this.img_no = response.data
     },
   },
-};
+}
 </script>
 
 <style  scoped>

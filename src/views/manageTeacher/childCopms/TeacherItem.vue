@@ -104,7 +104,7 @@ export default {
       // 跳转到编辑页面
       this.$router.replace({
         name: "teacherEdit",
-        params: {teacher_no: this.teacher.teacher_no,teacher_name:this.teacher.teacher_name,positions:this.teacher.positions}
+        params: {teacher: this.teacher}
         // params: {teacher:JSON.stringify(this.teacher)}
       })
     }
