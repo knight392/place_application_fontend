@@ -29,13 +29,13 @@ module.exports = {
     hotOnly: true, // 热更新
     // proxy: 'http://localhost:8080'   // 配置跨域处理,只有一个代理
     proxy: { //配置多个跨域
-      "/": {
+      "/api": {
         target: "http://localhost:8080",
         changeOrigin: true,
         ws: true, //websocket支持
         secure: false,
         pathRewrite: {
-          "^/": "" 
+          "^/api": "" 
         }
       }
     }

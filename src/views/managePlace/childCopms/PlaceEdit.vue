@@ -81,6 +81,7 @@ import {
   setencePlaceDuplicatedRequest,
 } from 'network/place'
 import { getAllTeachersRequest } from 'network/teacher'
+import { baseURL } from "network/request.js";
 
 export default {
   props: {
@@ -113,7 +114,7 @@ export default {
       place_info: this.place.place_info,
     }
     // 仅用来初次显示图片
-    this.imgList = this.place.image ? [{ url: this.place.image.path }] : []
+    this.imgList = this.place.image ? [{ url: this.baseURL + this.place.image.path }] : []
     this.img_no = this.place.image ? this.place.image.img_no : 0
     getAllTeachersRequest().then(
       (res) => {
@@ -187,6 +188,7 @@ export default {
       imgList: [],
       img_no: 0,
       uploadURL: '/uploadServlet',
+      baseURL
     }
   },
 

@@ -62,8 +62,8 @@ export default {
     };
     return {
       loginForm: {
-        account: "",
-        pass: "",
+        account: "123123",
+        pass: "123123",
       },
       rules: {
         account: [{ validator: validateAccount, trigger: "blur" }],

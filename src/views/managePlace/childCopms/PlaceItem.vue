@@ -10,7 +10,7 @@
       width="268px"
       height="200px"
       fit="fill"
-      :src="place.image.path"
+      :src="imgPath"
     />
     <div style="padding: 14px; position:relative">
       <div class="available-tag">
@@ -60,10 +60,12 @@
 
 <script>
 import { deletePlaceRequest } from "network/place";
+import { baseURL } from "network/request.js";
 export default {
   data() {
     return {
-      show: false
+      show: false,
+      baseURL
     };
   },
   props: {
@@ -71,6 +73,11 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  computed:{
+    imgPath(){
+      return this.baseURL + this.place.image.path;
+    }
   },
   methods: {
     deletePlace(place_no) {
